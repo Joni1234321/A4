@@ -73,21 +73,22 @@ public class GameOfLife {
 
     // Stores a snapshot every 10, 100, 1,000 and 10,000 steps
     void checkPeriodic () {
-        boolean added = false;
         for (int i = SNAPSHOTS; i > 0; i--) {
+            int deltaStep = (int)Math.pow(10, i);
             // Check
             if (Arrays.deepEquals(grid, snapshots[i-1])) {
-                int steps = (int)(step % Math.pow(10, i));
+                int steps = step % deltaStep;
+                if (steps == 0) steps += deltaStep;
+                
                 if (lowestRepeat > steps){
                     lowestRepeat = steps;
-                    System.out.println("Repeats itself every " + (lowestRepeat+1)+ " steps");
+                    System.out.println("Repeats itself every " + (lowestRepeat)+ " steps");
                 }
             }
 
             // Add
-            if (step % Math.pow(10, i) == 0) {
+            if (step % deltaStep == 0) {
                 snapshots[i-1] = grid;
-                added = true;
             }
 
         }

@@ -17,7 +17,7 @@ public class GameOfLifeMain {
         if (MANUAL)
             manualGame();
         else
-            automaticGame(10);
+            automaticGame(1000);
 
     }
 
