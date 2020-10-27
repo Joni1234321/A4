@@ -12,7 +12,7 @@ public class GameOfLifeMain {
         int grid [][] = loadMap("src/map/glider_gun.gol");
         if (grid == null) return;
 
-        game = new GameOfLife(grid);
+        game = new GameOfLife(100);
 
         if (MANUAL)
             manualGame();

@@ -49,12 +49,10 @@ public class GameOfLife {
 
     int liveNeighbours (int x, int y){
         int n = 0;
-
         for (int dy = -1; dy <= 1; dy++){
             for (int dx = -1; dx <= 1; dx++){
                 if (dx == 0 && dy == 0) continue; // Dont count center
-                if (x + dx == -1 || x + dx == size || y + dy == -1 || y + dy == size) continue; // Overflow
-                n += grid[x+dx][y+dy];
+                n += grid[Math.floorMod((x+dx), size)][Math.floorMod((y+dy), size)];
             }
         }
 
