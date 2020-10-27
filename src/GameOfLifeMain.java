@@ -9,7 +9,7 @@ public class GameOfLifeMain {
     static GameOfLife game;
     static final boolean MANUAL = false;
     public static void main(String[] args) throws FileNotFoundException {
-        int grid [][] = loadMap("src/map/glider_gun.gol");
+        int grid [][] = loadMap("src/map/acorn.gol");
         if (grid == null) return;
 
         game = new GameOfLife(100);
@@ -17,7 +17,7 @@ public class GameOfLifeMain {
         if (MANUAL)
             manualGame();
         else
-            automaticGame(30);
+            automaticGame(10);
 
     }
 
