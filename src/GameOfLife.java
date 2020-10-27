@@ -16,11 +16,11 @@ public class GameOfLife {
                 grid[x][y] = r.nextBoolean() ? 1 : 0;
 
         openWindow();
-        drawGrid(1);
-
     }
     public GameOfLife (int initialState[][]) {
-
+        this.size = initialState.length;
+        grid = initialState;
+        openWindow();
     }
 
     public void play (int msDelay) {
@@ -70,10 +70,13 @@ public class GameOfLife {
         StdDraw.show(msDelay);
     }
 
+    final int CANVAS_SIZE = 1024;
+    final int DEFAULT_CANVAS_SIZE = 512;
     void openWindow(){
-        StdDraw.setCanvasSize(1000,1000);
+        StdDraw.setCanvasSize(CANVAS_SIZE, CANVAS_SIZE);
         StdDraw.setScale(-1, size);
-        StdDraw.setPenRadius( 1 / (float)(size + 1) );      // Size is equal to one point
+        StdDraw.setPenRadius( 1 / (double)((size + 2) / (CANVAS_SIZE / DEFAULT_CANVAS_SIZE)) );      // Size is equal to one point
         StdDraw.show(1);
+        drawGrid(1);
     }
 }
