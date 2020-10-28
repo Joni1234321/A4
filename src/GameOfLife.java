@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class GameOfLife {
+    static final int MEANING = 42;
 
     int step = 0;
 
@@ -9,9 +10,9 @@ public class GameOfLife {
     int[][] grid;               // Data of grid
     int[][] gridCounter;        // X amount of times cell has been alive
 
-    final int SNAPSHOTS = 4;
+    final int SNAPSHOTS = 4;                    // Those are rookie numbers
     int[][][] snapshots;
-    int lowestRepeat = Integer.MAX_VALUE;
+    int lowestRepeat = Integer.MAX_VALUE;       // IT'S OVER NINE-THOUSAAAAAAAAAAAND !!!!!!
 
     public GameOfLife (int size) {
         this.size   = size;
@@ -54,7 +55,7 @@ public class GameOfLife {
         checkPeriodic();
     }
 
-    int liveNeighbours (int x, int y){
+    int liveNeighbours (int x, int y) {
         int n = 0;
         for (int dy = -1; dy <= 1; dy++){
             for (int dx = -1; dx <= 1; dx++){
@@ -87,7 +88,7 @@ public class GameOfLife {
         }
     }
 
-    public int getSize (){
+    public int getSize () {
         return size;
     }
     public int[][] getGrid() {
@@ -97,5 +98,13 @@ public class GameOfLife {
         return gridCounter;
     }
 
+    public String toString () {
+        String s = "";
+        // Print map
+        for (int y = 0; y < grid.length; y++){
+            s += Arrays.toString(grid[y]);
+        }
+        return s;
+    }
 
 }

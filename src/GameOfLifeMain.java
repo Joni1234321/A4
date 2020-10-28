@@ -7,23 +7,26 @@ import java.util.List;
 import java.util.Scanner;
 
 public class GameOfLifeMain {
-    static GameOfLife game;
-    static final boolean MANUAL = false;
+    static GameOfLife game;                 // ( ͡° ͜ʖ ͡°)
+
+    static final boolean MANUAL = false;    // Sry sir, but i don't know how to drive stick!
+    static final int FPS = 60;              // ThE huMaN eyE caN't SeE moRe tHaN 24 fpS
 
     public static void main(String[] args) throws FileNotFoundException {
-        int[][] grid = loadMap("src/map/acorn.gol");
-        if (grid == null) return;
+        int[][] map = loadMap("src/map/pulsar.gol");
+        if (map == null) return;
 
-        game = new GameOfLife(grid);
+        game = new GameOfLife(map);
         openWindow(game);
 
         if (MANUAL)
             manualGame();
         else
-            automaticGame(1000);
+            automaticGame(FPS);
 
     }
 
+    // ==================== STARTING GAME  ===================== //
     static void automaticGame (int updatesPerSecond) {
         int msDelay = 1000 / updatesPerSecond;
         while(true) {
@@ -31,7 +34,6 @@ public class GameOfLifeMain {
             drawGOL(game, msDelay);
         }
     }
-
     static void manualGame () {
         boolean running = true;
         Scanner console = new Scanner(System.in);
@@ -43,18 +45,8 @@ public class GameOfLifeMain {
         }
     }
 
-    static int getInput (Scanner console) {
-        console = new Scanner(System.in);
-
-        System.out.print("Enter amount of turns you want to skip: ");
-        while (!console.hasNextInt()){
-            console.nextLine();
-            System.out.print("Please write an integer: ");
-        }
-        return console.nextInt();
-    }
-
-    static int[][] loadMap (String path) throws FileNotFoundException{
+    // ==================== MAP GENERATION ===================== //
+    static int[][] loadMap (String path) throws FileNotFoundException {
         Scanner reader = new Scanner(new File(path));
         if (!reader.hasNextLine()) return null;
 
@@ -75,11 +67,11 @@ public class GameOfLifeMain {
             reader = new Scanner(lines.get(y));
 
             int x = 0;
-            while(reader.hasNextInt() && x < size) {   // Read every line
+            while(reader.hasNextInt() && x < size) {            // Read every line
                 grid[x][y] = reader.nextInt() == 1 ? 1 : 0;
                 x++;
             }
-            while (x < size){           // Fill the rest with 0
+            while (x < size) {                                  // Fill the rest with 0
                 grid[x][y] = 0;
                 x++;
             }
@@ -87,13 +79,20 @@ public class GameOfLifeMain {
         return grid;
     }
 
-    static void printGrid (int[][] grid){
-        for (int y = 0; y < grid.length; y++){
-            System.out.println(Arrays.toString(grid[y]));
+    // ==================== USER INPUT ========================= //
+    static int getInput (Scanner console) {
+        console = new Scanner(System.in);
+
+        System.out.print("Enter amount of turns you want to skip: ");
+        while (!console.hasNextInt()){
+            console.nextLine();
+            System.out.print("Please write an integer: ");
         }
+        return console.nextInt();
     }
 
-    // DRAW
+
+    // ==================== DRAW ENGINE ======================== //
     static void drawGOL(GameOfLife gol, int msDelay){
         StdDraw.clear();
         int[][] grid = gol.getGrid();
@@ -103,7 +102,7 @@ public class GameOfLifeMain {
             for (int x = 0; x < size; x++) {
                 boolean alive = grid[x][y] != 0 ? true : false;
                 StdDraw.setPenColor(colorFancy(alive, gridCounter[x][y]));
-                StdDraw.point(x,y);
+                StdDraw.filledSquare(x+.5f,y+.5f, 1/2f);
 
             }
         }
@@ -116,14 +115,14 @@ public class GameOfLifeMain {
         int size = gol.getSize();
 
         StdDraw.setCanvasSize(CANVAS_SIZE, CANVAS_SIZE);
-        StdDraw.setScale(-1, size);
-        StdDraw.setPenRadius( 1 / (double)((size + 2) / (CANVAS_SIZE / DEFAULT_CANVAS_SIZE)) );      // Size is equal to one point
+        StdDraw.setScale(0, size);
+        StdDraw.setPenRadius( 1 / (size) / (CANVAS_SIZE / (double)DEFAULT_CANVAS_SIZE));    // Size is equal to one point
         StdDraw.show(1);
         drawGOL(gol, 1);
     }
 
 
-    // COLOR SCHEMES
+    // ==================== COLOR SCHEMES ====================== //
     static final float SCALE1 = 5f, SCALE2 = 25f, SCALE3 = 5f;
     static Color colorNormal (boolean alive, int n) {
         if (alive) return Color.black;
