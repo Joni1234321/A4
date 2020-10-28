@@ -4,42 +4,37 @@ import java.util.Random;
 public class GameOfLife {
 
     int step = 0;
-    int size;       // Size of grid
-    int grid[][];   // Data of grid
+
+    int size;                   // Size of grid
+    int[][] grid;               // Data of grid
+    int[][] gridCounter;        // X amount of times cell has been alive
 
     final int SNAPSHOTS = 4;
-    int snapshots[][][];
+    int[][][] snapshots;
     int lowestRepeat = Integer.MAX_VALUE;
 
     public GameOfLife (int size) {
-        this.size = size;
-        grid = new int[size][size];
+        this.size   = size;
+        gridCounter = new int[size][size];
+        snapshots   = new int[SNAPSHOTS][size][size];
 
+        // Generate grid
+        grid = new int[size][size];
         Random r = new Random();
         for (int y = 0; y < size; y++)
             for (int x = 0; x < size; x++)
                 grid[x][y] = r.nextBoolean() ? 1 : 0;
-
-        snapshots = new int[SNAPSHOTS][size][size];
-
-        openWindow();
     }
     public GameOfLife (int initialState[][]) {
-        this.size = initialState.length;
-        grid = initialState;
+        this.size   = initialState.length;
+        gridCounter = new int[size][size];
+        snapshots   = new int[SNAPSHOTS][size][size];
 
-        snapshots = new int[SNAPSHOTS][size][size];
-
-        openWindow();
+        grid        = initialState;
     }
 
-    public void play (int msDelay) {
-        while(true) {
-            nextState(msDelay);
-        }
-    }
-    public void nextState (int msDelay) {
-        int nextGrid[][] = new int[size][size];
+    public void nextState () {
+        int[][] nextGrid = new int[size][size];
 
         for (int y = 0; y < size; y++){
             for (int x = 0; x < size; x++) {
@@ -51,13 +46,12 @@ public class GameOfLife {
                 else if (neighbours == 2 && alive == 1) next = 1;
 
                 nextGrid[x][y] = next;
+                gridCounter[x][y] += next;
             }
         }
         grid = nextGrid;
         step++;
         checkPeriodic();
-
-        drawGrid(msDelay);
     }
 
     int liveNeighbours (int x, int y){
@@ -86,30 +80,22 @@ public class GameOfLife {
                 }
             }
 
-            // Add
+            // Add after checking
             if (step % deltaStep == 0) {
                 snapshots[i-1] = grid;
             }
-
         }
     }
 
-    // DRAW
-    void drawGrid(int msDelay){
-        StdDraw.clear();
-        for (int y = 0; y < size; y++)
-            for (int x = 0; x < size; x++)
-                if (grid[x][y] != 0) StdDraw.point(x,y);
-        StdDraw.show(msDelay);
+    public int getSize (){
+        return size;
+    }
+    public int[][] getGrid() {
+        return grid;
+    }
+    public int[][] getGridCounter () {
+        return gridCounter;
     }
 
-    final int CANVAS_SIZE = 1024;
-    final int DEFAULT_CANVAS_SIZE = 512;
-    void openWindow(){
-        StdDraw.setCanvasSize(CANVAS_SIZE, CANVAS_SIZE);
-        StdDraw.setScale(-1, size);
-        StdDraw.setPenRadius( 1 / (double)((size + 2) / (CANVAS_SIZE / DEFAULT_CANVAS_SIZE)) );      // Size is equal to one point
-        StdDraw.show(1);
-        drawGrid(1);
-    }
+
 }
