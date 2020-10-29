@@ -9,11 +9,11 @@ import java.util.Scanner;
 public class GameOfLifeMain {
     static GameOfLife game;                 // ( ͡° ͜ʖ ͡°)
 
-    static final boolean MANUAL = false;    // Sry sir, but i don't know how to drive stick!
+    static final boolean MANUAL = true;    // Sry sir, but i don't know how to drive stick!
     static final int FPS = 60;              // ThE huMaN eyE caN't SeE moRe tHaN 24 fpS
 
     public static void main(String[] args) throws FileNotFoundException {
-        int[][] map = loadMap("src/map/pulsar.gol");
+        int[][] map = loadMap("src/map/acorn.gol");
         if (map == null) return;
 
         game = new GameOfLife(map);
@@ -96,34 +96,30 @@ public class GameOfLifeMain {
     static void drawGOL(GameOfLife gol, int msDelay){
         StdDraw.clear();
         int[][] grid = gol.getGrid();
-        int[][] gridCounter = gol.getGridCounter();
         int size = gol.getSize();
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
-                boolean alive = grid[x][y] != 0 ? true : false;
-                StdDraw.setPenColor(colorFancy(alive, gridCounter[x][y]));
+                boolean alive = (grid[x][y] & 0b1) != 0;
+                StdDraw.setPenColor(colorFancy(alive, grid[x][y] >> 1));
                 StdDraw.filledSquare(x+.5f,y+.5f, 1/2f);
-
             }
         }
         StdDraw.show(msDelay);
     }
 
     static final int CANVAS_SIZE = 1024;
-    static final int DEFAULT_CANVAS_SIZE = 512;
     static void openWindow(GameOfLife gol){
         int size = gol.getSize();
 
         StdDraw.setCanvasSize(CANVAS_SIZE, CANVAS_SIZE);
         StdDraw.setScale(0, size);
-        StdDraw.setPenRadius( 1 / (size) / (CANVAS_SIZE / (double)DEFAULT_CANVAS_SIZE));    // Size is equal to one point
         StdDraw.show(1);
         drawGOL(gol, 1);
     }
 
 
     // ==================== COLOR SCHEMES ====================== //
-    static final float SCALE1 = 5f, SCALE2 = 25f, SCALE3 = 5f;
+    static final float SCALE1 = 10f, SCALE2 = 5f, SCALE3 = 5f;
     static Color colorNormal (boolean alive, int n) {
         if (alive) return Color.black;
         return Color.white;

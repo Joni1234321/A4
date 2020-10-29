@@ -8,16 +8,14 @@ public class GameOfLife {
 
     int size;                   // Size of grid
     int[][] grid;               // Data of grid
-    int[][] gridCounter;        // X amount of times cell has been alive
 
     final int SNAPSHOTS = 4;                    // Those are rookie numbers
-    int[][][] snapshots;
+    boolean[][][] snapshots;
     int lowestRepeat = Integer.MAX_VALUE;       // IT'S OVER NINE-THOUSAAAAAAAAAAAND !!!!!!
 
     public GameOfLife (int size) {
         this.size   = size;
-        gridCounter = new int[size][size];
-        snapshots   = new int[SNAPSHOTS][size][size];
+        snapshots   = new boolean[SNAPSHOTS][size][size];
 
         // Generate grid
         grid = new int[size][size];
@@ -28,8 +26,7 @@ public class GameOfLife {
     }
     public GameOfLife (int initialState[][]) {
         this.size   = initialState.length;
-        gridCounter = new int[size][size];
-        snapshots   = new int[SNAPSHOTS][size][size];
+        snapshots   = new boolean[SNAPSHOTS][size][size];
 
         grid        = initialState;
     }
@@ -39,15 +36,17 @@ public class GameOfLife {
 
         for (int y = 0; y < size; y++){
             for (int x = 0; x < size; x++) {
-                int alive = grid[x][y];
+                int alive = (grid[x][y] & 0b1);
                 int neighbours = liveNeighbours(x, y);
 
-                int next = 0;
-                if (neighbours == 3) next = 1;
-                else if (neighbours == 2 && alive == 1) next = 1;
+                nextGrid[x][y] = (grid[x][y] & ~0b1);                                       // Add counter value except 1st bit
+                nextGrid[x][y] += alive << 1;                                               // Increment counter if alive
+                if (neighbours == 3) nextGrid[x][y] |= 0b1;                                 // Set 1st bit
+                else if ((neighbours + alive) == 3) nextGrid[x][y] |=0b1;
 
-                nextGrid[x][y] = next;
-                gridCounter[x][y] += next;
+
+                // if (alive != 0) System.out.println("Alive: " + alive + " Vals: " + nextGrid[x][y]);
+                // gridCounter[x][y] += next;
             }
         }
         grid = nextGrid;
@@ -60,7 +59,7 @@ public class GameOfLife {
         for (int dy = -1; dy <= 1; dy++){
             for (int dx = -1; dx <= 1; dx++){
                 if (dx == 0 && dy == 0) continue; // Dont count center
-                n += grid[(x + dx + size) % size][(y + dy + size) % size];
+                n += (grid[(x + dx + size) % size][(y + dy + size) % size] & 0b1);
             }
         }
         return n;
@@ -68,24 +67,33 @@ public class GameOfLife {
 
     // Stores a snapshot every 10, 100, 1,000 and 10,000 steps
     void checkPeriodic () {
+        boolean[][] aliveGrid = generateAliveGrid();
         for (int i = SNAPSHOTS; i > 0; i--) {
             int deltaStep = (int)Math.pow(10, i);
             // Check
-            if (Arrays.deepEquals(grid, snapshots[i-1])) {
+            if (Arrays.deepEquals(aliveGrid, snapshots[i-1])) {     // Compare alive grid to snapshot
                 int steps = step % deltaStep;
                 if (steps == 0) steps += deltaStep;
                 
                 if (lowestRepeat > steps){
                     lowestRepeat = steps;
-                    System.out.println("Repeats itself every " + (lowestRepeat)+ " steps");
+                    System.out.println("Repeats itself every " + (lowestRepeat)+ " steps at:" + step);
                 }
             }
 
             // Add after checking
             if (step % deltaStep == 0) {
-                snapshots[i-1] = grid;
+                snapshots[i-1] = aliveGrid;
             }
         }
+    }
+
+    boolean[][] generateAliveGrid () {
+        boolean[][] aliveGrid = new boolean[size][size];
+        for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+                aliveGrid[x][y] = (grid[x][y] & 0b1) == 1;
+        return aliveGrid;
     }
 
     public int getSize () {
@@ -93,9 +101,6 @@ public class GameOfLife {
     }
     public int[][] getGrid() {
         return grid;
-    }
-    public int[][] getGridCounter () {
-        return gridCounter;
     }
 
     public String toString () {
