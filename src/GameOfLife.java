@@ -39,14 +39,15 @@ public class GameOfLife {
                 int alive = (grid[x][y] & 0b1);
                 int neighbours = liveNeighbours(x, y);
 
-                nextGrid[x][y] = (grid[x][y] & ~0b1);                                       // Add counter value except 1st bit
-                nextGrid[x][y] += alive << 1;                                               // Increment counter if alive
-                if (neighbours == 3) nextGrid[x][y] |= 0b1;                                 // Set 1st bit
-                else if ((neighbours + alive) == 3) nextGrid[x][y] |=0b1;
+                // BRAAANCHLESSS!S!!!!
+                nextGrid[x][y] = (grid[x][y] & ~0b1) + (alive << 1);                 // Increment next value, and clear 1st bit
+                nextGrid[x][y] |= ((neighbours | alive) - 0b11 == 0) ? 0b1 : 0b0;    // Set 1st bit
+
+                // if ((neightbours | alive) == 3) så er cellen i live
+                // derfor kan man - med 3 på begge sider
+                // (neightbours | alive) - 3 == 0
 
 
-                // if (alive != 0) System.out.println("Alive: " + alive + " Vals: " + nextGrid[x][y]);
-                // gridCounter[x][y] += next;
             }
         }
         grid = nextGrid;
