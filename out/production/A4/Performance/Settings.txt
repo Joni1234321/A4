@@ -1,0 +1,3 @@
+Random map 300
+auto
+
