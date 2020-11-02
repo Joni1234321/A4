@@ -17,11 +17,11 @@ public class GameOfLife {
 
     final int SNAPSHOTS = 4;                    // Those are rookie numbers
     boolean[][][] snapshots;
+    long[][] improvedSnapshots;
     int lowestRepeat = Integer.MAX_VALUE;       // IT'S OVER NINE-THOUSAAAAAAAAAAAND !!!!!!
 
     public GameOfLife (int size) {
         this.size   = size;
-        snapshots   = new boolean[SNAPSHOTS][size][size];
 
         // Generate grid
         grid = new int[size][size];
@@ -31,15 +31,18 @@ public class GameOfLife {
                 grid[x][y] = r.nextBoolean() ? 1 : 0;
 
         createNeighbourGrid();
+        createSnapshots();
+
 
     }
     public GameOfLife (int initialState[][]) {
         this.size   = initialState.length;
-        snapshots   = new boolean[SNAPSHOTS][size][size];
 
+        // Generate grid
         grid        = initialState;
 
         createNeighbourGrid();
+        createSnapshots();
     }
 
     /* TIL LUKAS OG NIELS
@@ -136,37 +139,59 @@ public class GameOfLife {
         }
     }
 
+    void createSnapshots() {
+        improvedSnapshots = new long[SNAPSHOTS][(size * size) / Long.BYTES + 1];
+        for (int i = 0; i < improvedSnapshots.length; i++) {
+            improvedSnapshots[i] = generateAliveGrid();
+        }
+    }
+
     // Stores a snapshot every 10, 100, 1,000 and 10,000 steps
     void checkPeriodic () {
-        boolean[][] aliveGrid = generateAliveGrid();
+        long[] aliveGrid = generateAliveGrid();
+
         for (int i = SNAPSHOTS; i > 0; i--) {
             int deltaStep = (int)Math.pow(10, i);
 
             // Compare alive grid to snapshot
-            if (Arrays.deepEquals(aliveGrid, snapshots[i-1])) {
+            if (compareAliveToSnapshot(aliveGrid, improvedSnapshots[i-1])) {
                 int steps = step % deltaStep;
+
+                // Make sure it doesnt write every 0 steps (example, if it repeats every 10 steps, dont write every 0 steps, but every 10 steps)
                 if (steps == 0) steps += deltaStep;
-                
-                if (lowestRepeat > steps){
+
+               if (lowestRepeat > steps){
                     lowestRepeat = steps;
                     System.out.println("Repeats itself every " + (lowestRepeat)+ " steps at: " + step);
-                }
+               }
             }
 
             // Set snapshot after checking
             if (step % deltaStep == 0) {
-                snapshots[i-1] = aliveGrid;
+                improvedSnapshots[i-1] = aliveGrid;
             }
         }
     }
 
-    boolean[][] generateAliveGrid () {
-        boolean[][] aliveGrid = new boolean[size][size];
-        for (int y = 0; y < size; y++)
-            for (int x = 0; x < size; x++)
-                aliveGrid[x][y] = (grid[x][y] & 0b1) == 1;
+    // Generate a list of longs where every bit represents a point
+    long[] generateAliveGrid () {
+        long[] aliveGrid = new long[1 + (size * size) / (Long.BYTES)];
+        for (int y = 0; y < size; y++) {
+            for (int x = 0;  x < size; x++) {
+                int index = (y * size + x);
+                int alive = grid[x][y] & 0b1;
+                aliveGrid[index / Long.BYTES] += alive << (index % Long.BYTES);
+            }
+        }
         return aliveGrid;
     }
+    boolean compareAliveToSnapshot (long[] alive, long[] snapshot) {
+        for (int i = 0; i < alive.length; i++) {
+            if (snapshot[i] != alive[i]) return false;
+        }
+        return true;
+    }
+
 
     public int getSize () {
         return size;

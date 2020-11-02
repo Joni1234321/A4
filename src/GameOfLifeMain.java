@@ -9,10 +9,10 @@ public class GameOfLifeMain {
     static GameOfLife game;                  // ( ͡° ͜ʖ ͡°)
 
     static final boolean TIME_STAMPS = false;// Time stamps for every step
-    static final boolean DRAW_SIMPLE = true; // true = black and white, false = color (Simple = less resources)
+    static final boolean DRAW_SIMPLE = false; // true = black and white, false = color (Simple = less resources)
 
     static final boolean MANUAL = false;     // Sry sir, but i don't know how to drive stick!
-    static final int MAX_FPS = 120;          // ThE huMaN eyE caN't SeE moRe tHaN 24 fpS
+    static final int MAX_FPS = 0;            // [0 for no limit] - ThE huMaN eyE caN't SeE moRe tHaN 24 fpS
 
     public static void main(String[] args) throws FileNotFoundException {
         int[][] map = loadMap("src/map/acorn.gol");

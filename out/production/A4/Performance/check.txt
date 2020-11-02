@@ -1,0 +1,31 @@
+Acorn map
+Manual with color
+Write 5000 in console
+Should be repeated at step 4342
+
+
+
+Normal check:
+2.38
+2.45
+2.4
+2.5
+2.48
+2.5
+2.38
+
+SmartCheck (Convert to ints)
+2.6
+2.7
+2.3
+2.4
+2.28
+
+SmartCheck (Convert to longs)
+2.5
+2
+2.25
+2.7
+2.08
+2.25
+1.9
